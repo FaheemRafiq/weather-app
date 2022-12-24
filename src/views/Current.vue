@@ -2,55 +2,31 @@
 import { ref, reactive, toRefs, onMounted } from "vue";
 import HeaderVue from "../components/Header.vue";
 import { useAddressStore } from "../stores/address";
-
+import { useWeatherStore } from "../stores/weather";
 export default {
   components: { HeaderVue },
   setup() {
     const address = useAddressStore();
-    const weather = reactive({
-      current: null,
-      forecast: null,
-    });
-
-    const fetchData = async () => {
-      try {
-        const options = {
-          method: "GET",
-          headers: {
-            "X-RapidAPI-Key":
-              "37d562c407msh49e256e2249426cp167c46jsnefa0d775d115",
-            "X-RapidAPI-Host": "aerisweather1.p.rapidapi.com",
-          },
-        };
-
-        fetch(
-          `https://aerisweather1.p.rapidapi.com/observations/${address.city},pk`,
-          options
-        )
-          .then((response) => response.json())
-          .then((response) => {
-            weather.current = response;
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    onMounted(fetchData);
+    const weather = useWeatherStore();
 
     return {
-      ...toRefs(weather),
-      fetchData,
+       address,
+       weather
     };
   },
 };
 </script>
 
 <template>
-  <div>
-    <HeaderVue @cityChanged="fetchData" />
-    <div>
-      {{ current }}
+  <div class="h-screen dark:bg-gray-700 dark:text-white">
+    <HeaderVue />
+
+    {{ weather.location }}
+
+
+    <!-- Geolocation Button -->
+    <div class="absolute bottom-5 right-8">
+       <span class="material-symbols-rounded cursor-pointer bg-sky-300 hover:bg-sky-400 p-1 rounded-full "> my_location </span> 
     </div>
   </div>
 </template>
