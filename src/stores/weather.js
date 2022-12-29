@@ -1,38 +1,35 @@
-import { defineStore } from "pinia";
-import { onMounted, reactive, ref, toRef } from "vue";
-import { useAddressStore } from "./address";
-export const useWeatherStore = defineStore("weather", () => {
-  // States
-  const current = reactive({});
-  const forecast = reactive({});
-  const address = useAddressStore();
-  const location = reactive({});
-
-  // Actionss
-  function fetchData() {
-    try {
-      fetch(
-        `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${address.city}?unitGroup=metric&key=BSGFPUCQ44RPLZ9MFY5SM6V3E&contentType=json`
-      )
-        .then((response) => response.json())
-        .then((response) => {
-          current.value = response.currentConditions;
-          forecast.value = response.days;
-        //   console.log(response);
-          location.value = response;
-        });
-    } catch (error) {
-      console.log(error);
+import {
+    defineStore
+} from "pinia";
+import {
+    useAddressStore
+} from "./address";
+export const useWeatherStore = defineStore("weather", {
+    state: () => {
+        return {
+            current: null,
+            forecast: null,
+            location: null,
+            address: useAddressStore(),
+            unitGroup: false,
+        }
+    },
+    actions: {
+        async fetchData() {
+            try {
+                fetch(
+                        `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${this.address.city}?unitGroup=us&key=BSGFPUCQ44RPLZ9MFY5SM6V3E&contentType=json`
+                    )
+                    .then((response) => response.json())
+                    .then((response) => {
+                        this.current = response.currentConditions;
+                        this.forecast = response.days;
+                        this.location = response;
+                        // console.log(response);
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
-  }
-
-
-  onMounted(fetchData);
-  //   return define values
-  return {
-    current,
-    forecast,
-    location,
-    fetchData,
-  };
 });
