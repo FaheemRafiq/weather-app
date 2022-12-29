@@ -1,9 +1,6 @@
-<script>
+<script setup>
 import Current from './views/Current.vue';
-export default {
-  components: { Current },
-  name: "App",
-};
+import { ref } from 'vue';
 </script>
 
 <template>
